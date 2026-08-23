@@ -1,0 +1,9 @@
+# 构建产物不入库（zip 作为 GitHub Release 附件发布）
+*.zip
+*.rar
+
+# Python / 系统
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
