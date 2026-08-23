@@ -92,16 +92,17 @@ cumcm-live-workflow/
 
 ## 维护与更新
 
-本仓库由 AI 智能体（Agent 会话）维护，更新流程如下：
+本仓库由 AI 智能体（Agent 会话）维护，更新流程：
 
 1. 编辑 `cumcm-live-workflow/SKILL.md` 或 `README.md`
 2. `git add -A && git commit`（提交说明写明版本号）
-3. `git push`（需本机已 `gh auth login`；走代理时设置 `HTTPS_PROXY`）
-4. 重新打包 `cumcm-live-workflow-skill-vX.Y.zip`（内容：README.md + cumcm-live-workflow/SKILL.md）
-5. 发布新 Release 并附带 zip：`gh release create vX.Y <zip> --notes "更新摘要"`
+3. `git push origin main`（本地仓库已配置认证与代理，无需额外操作）
+4. 有新版本时：重打包 `cumcm-live-workflow-skill-vX.Y.zip`（内容：README.md + cumcm-live-workflow/SKILL.md），创建新 Release 并上传 zip 附件
 
-> 对使用者的要求：仅本地 `git pull` 即可获取更新；zip 通过 Release 页面下载。
-> 对维护者（Agent）的要求：gh 已授权登录（token 存于 `~/.config/gh/hosts.yml`）；推送走系统代理（如 `127.0.0.1:7897`）时需显式设置 `HTTPS_PROXY` 环境变量。
+**本地推送认证说明**（维护者须知）：仓库级 `.git/config` 已配置 `http.extraheader`（`Authorization: Basic <base64(用户名:token)>`，基于 GitHub Personal Access Token）与 `http.sslbackend=openssl`；推送前设置代理环境变量（本机 `HTTPS_PROXY=http://127.0.0.1:7897`）。GitHub 的 git 端点只接受 Basic 认证（Bearer/token 方案会 401），且 extraheader 是**多值配置**，重复设置会导致 "Duplicate header: Authorization" 400 错误——设置前先 `git config --unset-all http.extraheader`。
+
+> 对使用者的要求：`git clone` 或 `git pull` 即可获取更新；zip 通过 Releases 页面下载。
+> 安全提示：若 PAT 需轮换，请到 GitHub Settings → Developer settings → Personal access tokens 撤销旧 token，并在本地重跑 `git config http.extraheader "Authorization: Basic <base64(用户名:新token)>"`。
 
 ## 许可
 
