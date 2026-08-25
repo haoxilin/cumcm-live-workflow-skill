@@ -1,6 +1,6 @@
 ---
 name: cumcm-live-workflow
-description: CUMCM（全国大学生数学建模竞赛）真题全流程实战手册。用于完整打一场数模竞赛（环境准备→读题自查→建模出图→LaTeX论文→交叉审阅→填表→AI自查表终审→清理打包），内含题意理解红线、数值严谨性守则、去AIGC特征清单、写作规范、LaTeX编号与图表规范、2026 AI合规与终审核查框架。触发于用户开始完整做真题、备赛训练、即将正式参赛，或要求按AI自查表对成品论文终审整改。
+description: CUMCM（全国大学生数学建模竞赛）真题全流程实战手册。用于完整打一场数模竞赛（环境准备→读题自查→建模出图→LaTeX论文→交叉审阅→填表→AI自查表终审→清理打包），内含题意理解红线、数值严谨性守则、去AIGC特征清单、写作规范、LaTeX编号与图表规范、2026 AI合规与终审核查框架。触发于用户开始完整做真题、备赛训练、即将正式参赛，或要求按AI自查表对成品论文终审整改。**启动关键词**：国赛、数学建模竞赛、真题全流程、按竞赛标准走完流程、备赛、环境检查/检查环境/准备环境、按自查表审查——命中任一即启动，启用后第一步自动执行环境检查。
 ---
 
 # CUMCM 真题全流程实战手册
@@ -9,10 +9,17 @@ description: CUMCM（全国大学生数学建模竞赛）真题全流程实战�
 
 ## 触发条件
 
+**启动关键词**（任一命中即启动本技能）：
+- 流程类：完整做真题 / 按竞赛标准走完流程 / 数学建模竞赛实战 / 打国赛 / 备赛训练 / 模拟竞赛
+- 环境类：环境检查 / 检查环境 / 准备环境 / 环境就绪
+- 终审类：按 AI 自查表审查 / 自查表终审 / 论文终审整改
+
+具体场景：
 - 用户开始完整做一道真题（练手或正式比赛）
 - 备赛训练：模拟完整流程
 - 已出题、要求"按竞赛标准走完流程"
 - 拿到成品论文，要求按 AI 自查表终审整改
+- **启动后第一步：自动执行 §0 环境检查并报告完成度，再进入读题**
 
 ## 工作区约定
 
@@ -30,16 +37,35 @@ description: CUMCM（全国大学生数学建模竞赛）真题全流程实战�
 
 ---
 
-## 0. 环境检查（一次，可跳过）
+## 0. 环境检查（启用后自动执行，无需用户要求）
 
-```powershell
-python --version && pip list | Select-String "numpy|scipy|pandas|matplotlib|openpyxl|scikit-learn"
-xelatex --version   # MiKTeX 或 TeX Live
-pdftoppm --version; pdftotext --version
+### 0.1 自动检测并报告完成度（先做，不询问）
+技能一经启用，立即后台探测本地环境，输出**前置条件完成度清单**：
+
+| 组件 | 检测命令 | 通过标准 |
+|---|---|---|
+| Python | `python --version` | ≥ 3.12 |
+| numpy / scipy / pandas / matplotlib / openpyxl | `python -c "import numpy,scipy,pandas,matplotlib,openpyxl"` | 全部可导入 |
+| scikit-learn、black（可选） | 同上 | 可导入 |
+| LaTeX（xelatex） | `xelatex --version` | MiKTeX 或 TeX Live 可用 |
+| ctex 宏包 / 中文字体 | `kpsewhich ctex.sty` + SimSun/SimHei 存在 | 通过 |
+| pdftotext / pdftoppm（可选） | `--version` | 通过 |
+
+报告格式示例：
+```
+[环境检查] Python 3.12.10 ✓ | numpy ✓ | scipy ✓ | pandas ✓ | matplotlib ✓ | openpyxl ✓
+LaTeX (xelatex) ✗ 未安装 | ctex 宏包 ✗ | pdftotext ✗（可选）
+完成度：6/9  ✓ 必装组件缺失：LaTeX、ctex
 ```
 
-- pip 一律清华镜像：`pip install X -i https://pypi.tuna.tsinghua.edu.cn/simple`
-- 视觉 QA：主模型无多模态时，用可用的视觉 API 直调读图
+### 0.2 确认后自动安装缺失组件
+把清单交给用户确认（"缺失组件是否自动安装？"），**得到明确确认后**执行：
+- **pip 组件**：`pip install X -i https://pypi.tuna.tsinghua.edu.cn/simple`（国内镜像）
+- **LaTeX（xelatex + ctex）**：优先 `winget install MiKTeX.MiKTeX`（或提示用户用官方安装器 / TeX Live）；装后需刷新 PATH 或重开终端
+- **poppler（pdftotext / pdftoppm）**：`winget install poppler`（可选组件，缺失可跳过，不阻塞）
+- 安装完成后**复测**，更新完成度清单直至 100% 或用户手动处理；最终报告"环境就绪，可开始读题"
+- 红线：**未获用户确认不得安装任何软件**；涉及系统级变更（装 LaTeX/驱动等）时给出明确提示
+- 网络：pip 走清华镜像；若网络受限（如需代理），先探测 `HTTPS_PROXY` 环境变量并询问用户
 
 ## 1. 读题 + 格式规范
 
