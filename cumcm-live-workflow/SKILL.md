@@ -274,6 +274,28 @@ AI 工具使用声明
 - 提交前 grep 检查：`Select-String -Path *.py -Pattern "\\\\"` 确认无路径反斜杠残留
 - 附录代码用 black 格式化（`pip install black` + `python -m black *.py`），格式化后**重跑验证**功能未破坏
 
+## 8. 仓库配套文件与用法（本技能自带工具，直接调用）
+
+### 8.1 可执行验证模板（references/，直接改参数复用）
+| 文件 | 何时用 | 用法 |
+|---|---|---|
+| `references/verify_figure_arrows.py` | 流程图生成/整改后 | 检测箭头是否穿框（间隙条带法）：`python references/verify_figure_arrows.py <图.png>` |
+| `references/verify_xlsx_rows.py` | 填 result 模板后 | 校验 xlsx 行映射与数值：`python references/verify_xlsx_rows.py <结果.xlsx>` |
+| `references/verify_pdf_metrics.py` | 论文编译后交付前 | PDF 结构/越界/匿名/关键数字体检：`python references/verify_pdf_metrics.py <论文.pdf> 412.47 0.4503 ...` |
+| `references/sensitivity_framework.py` | 敏感性分析 | 参数扰动跑批框架：实现 `run_metric` 后运行 |
+
+### 8.2 参考材料（templates/，供下载使用）
+| 文件 | 用途 |
+|---|---|
+| `templates/格式规范.pdf` | 当届官方《论文格式规范》，§1 读题时对照 |
+| `templates/AI工具使用规定(2026试行).pdf` | 2026 AI 合规红线，§6.1 终审时对照 |
+| `templates/2026数学建模国赛AI自查表.docx` | §6 AI 自查表驱动终审的核查清单 |
+| `templates/2026数学建模国赛标准论文Word模板.doc` | Word 排版参考（三线表/页码/样式），LaTeX 论文亦可对照其结构 |
+
+### 8.3 最小工作示例
+- `WORKED_EXAMPLE.md`：通用"水箱注水"案例，演示从题面→解析验证→数值求解→交叉验证→敏感性→结构化交付的完整链路。
+- **正式工作前先读一遍**，让"对的样子"进上下文；把案例中的模型/数据换成你的真实题面，其余环节照做。
+
 ## 交付物清单
 
 ```
